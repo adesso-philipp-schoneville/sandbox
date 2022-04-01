@@ -148,3 +148,4 @@ cython_debug/
 
 # scribble files
 msg_data
+scratch*.py

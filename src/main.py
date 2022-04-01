@@ -1,9 +1,7 @@
 import os
-import receive_messages
-
-from flask import Flask, Response, request
+from src.receive_messages import pull_msg
+from flask import Flask, Response
 from flask_cors import CORS
-
 from src.common import logger
 
 app = Flask(__name__)
@@ -21,17 +19,18 @@ response_headers = {
 @app.route("/pull-messages", methods=["POST"])
 def pull_messages() -> Response:
     """
-    Pulls all messages from a pub/sub topic and pushes the content of a JSON file into a
-    cloud task queue.
+    Pulls all messages from a pub/sub topic and loads the content of a JSON file into a
+    BigQuery table.
     """
 
     try:
-        receive_messages.main()
+        pull_msg()
     except Exception as err:
         msg = f"Error {err}"
         logger.error(msg)
 
     content = "Finished pulling messages."
+    logger.info(content)
     return Response(content, status=200, headers=response_headers)
 
 
