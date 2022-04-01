@@ -1,2 +1,6 @@
 # Scribble files
 msg_data
+
+# Byte-compiled
+src/__pycache__/
+

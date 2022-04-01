@@ -1,7 +1,5 @@
-import json
 import os
 import receive_messages
-import read_storage
 
 from flask import Flask, Response, request
 from flask_cors import CORS
@@ -22,6 +20,11 @@ response_headers = {
 
 @app.route("/pull-messages", methods=["POST"])
 def pull_messages() -> Response:
+    """
+    Pulls all messages from a pub/sub topic and pushes the content of a JSON file into a
+    cloud task queue.
+    """
+
     try:
         receive_messages.main()
     except Exception as err:
@@ -29,13 +32,6 @@ def pull_messages() -> Response:
         logger.error(msg)
 
     content = "Finished pulling messages."
-    return Response(content, status=200, headers=response_headers)
-
-
-@app.route("/read-storage", methods=["POST"])
-def read_object() -> Response:
-    read_storage.main()
-    content = "Finished reading objects."
     return Response(content, status=200, headers=response_headers)
 
 

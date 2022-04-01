@@ -1,5 +1,6 @@
 from concurrent.futures import TimeoutError
 from google.cloud import pubsub_v1
+import create_task
 
 
 PROJECT_ID = "svg-dcc-sbx-generic-0516"
@@ -16,12 +17,14 @@ subscription_path = subscriber.subscription_path(PROJECT_ID, SUBSCRIPTION_ID)
 def callback(message: pubsub_v1.subscriber.message.Message) -> None:
     print(f"Received \n{message}.")
 
-    if ".json" in message.attributes["objectId"]:
-        print(message.attributes["objectId"])
+    if (
+        ".json" in message.attributes["objectId"]
+        and "OBJECT_FINALIZE" in message.attributes["eventType"]
+    ):
+        file_path = message.attributes["objectId"]
+        create_task.main(file_path)
 
-        with open("msg_data", "w") as f:
-            f.write(message.data.decode())
-    # message.ack()
+    message.ack()
 
 
 def main():
