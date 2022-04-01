@@ -5,7 +5,7 @@ import json
 import datetime
 
 
-GCP_PROJECT = "noz-digital-audio-data-dev"
+PROJECT_ID = "svg-dcc-sbx-generic-0516"
 LOCATION = "europe-west3"
 BUCKET_NAME = "cms-data-export-c46f0c99"
 # TODO: Change task queue name
@@ -13,7 +13,7 @@ TASK_QUEUE = "extract-app-queue"
 
 STORAGE_CLIENT = storage.Client()
 TASK_CLIENT = tasks_v2.CloudTasksClient()
-PARENT = TASK_CLIENT.queue_path(GCP_PROJECT, LOCATION, TASK_QUEUE)
+PARENT = TASK_CLIENT.queue_path(PROJECT_ID, LOCATION, TASK_QUEUE)
 
 
 dispatch_config = {
