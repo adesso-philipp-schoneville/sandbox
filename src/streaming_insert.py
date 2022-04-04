@@ -26,7 +26,7 @@ def read_json_file(file_path: str) -> dict:
     blob = bucket.get_blob(f"{file_path}")
     downloaded_blob = blob.download_as_string()
     data = json.loads(downloaded_blob)
-    data["ingestion_date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    data.setdefault("ingestion_time", str(datetime.now()))
     file_data[file_category].update(data)
 
     return file_data
