@@ -146,6 +146,5 @@ cython_debug/
 # MacOS
 .DS_Store
 
-# scribble files
-msg_data
+# Scribble files
 scratch*.py

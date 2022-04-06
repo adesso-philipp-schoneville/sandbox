@@ -1,8 +1,11 @@
 import os
-from src.receive_messages import pull_msg
-from flask import Flask, Response
+
+from flask import Flask, Response, request
 from flask_cors import CORS
+
 from src.common import logger
+from src.streaming_insert import stream_data
+
 
 app = Flask(__name__)
 
@@ -16,20 +19,28 @@ response_headers = {
 }
 
 
-@app.route("/pull-messages", methods=["POST"])
-def pull_messages() -> Response:
+@app.route("/get-messages", methods=["POST"])
+def get_messages() -> Response:
     """
-    Pulls all messages from a pub/sub topic and loads the content of a JSON file into a
+    Get all messages from a pub/sub topic and loads the content of a JSON file into a
     BigQuery table.
     """
 
-    try:
-        pull_msg()
-    except Exception as err:
-        msg = f"Error {err}"
-        logger.error(msg)
+    envelope = request.get_json()
 
-    content = "Finished pulling messages."
+    if not envelope:
+        msg = "No Pub/Sub message received."
+        print(f"error: {msg}")
+        return f"Bad Request: {msg}", 400
+
+    if (
+        ".json" in envelope["message"]["attributes"]["objectId"]
+        and "OBJECT_FINALIZE" in envelope["message"]["attributes"]["eventType"]
+    ):
+        file_path = envelope["message"]["attributes"]["objectId"]
+        stream_data(file_path)
+
+    content = "Pub/Sub message received."
     logger.info(content)
     return Response(content, status=200, headers=response_headers)
 

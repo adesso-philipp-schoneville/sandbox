@@ -1,8 +1,10 @@
+import json
+
+from datetime import datetime
 from google.cloud import storage
 from google.cloud import bigquery
+
 from src.common import logger
-import json
-from datetime import datetime
 
 
 DATASET_PATH = "svg-dcc-sbx-generic-0516.raw"
@@ -53,5 +55,9 @@ def write_to_bigquery(document: dict) -> None:
 
 
 def stream_data(file_path: str) -> None:
+    """
+    Reads file content from the given file path and writes it to BigQuery.
+    """
+
     data = read_json_file(file_path)
     write_to_bigquery(data)
